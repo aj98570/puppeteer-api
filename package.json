@@ -1,4 +1,4 @@
-]{
+{
   "name": "puppeteer-api",
   "version": "1.0.0",
   "type": "module",
@@ -12,3 +12,4 @@
     "puppeteer": "^21.3.8"
   }
 }
+
