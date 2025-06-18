@@ -15,8 +15,9 @@ app.get("/", async (req, res) => {
   try {
     const browser = await puppeteer.launch({
       headless: "new",
-      ignoreHTTPSErrors: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"]
+      executablePath: puppeteer.executablePath(), // ✅ Add this line
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      ignoreHTTPSErrors: true
     });
 
     const page = await browser.newPage();
