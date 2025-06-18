@@ -13,19 +13,14 @@ app.get("/", async (req, res) => {
   }
 
   try {
-const browserFetcher = puppeteer.createBrowserFetcher({
-  product: 'chrome',
-  path: path.resolve('/opt/render/.cache/puppeteer') // use same as postinstall cache path
-});
-const revisionInfo = await browserFetcher.download('137.0.7151.70');
+    const chromePath = "/opt/render/.cache/puppeteer/chrome/linux-137.0.7151.70/chrome-linux64/chrome";
 
-const browser = await puppeteer.launch({
-  headless: "new",
-  executablePath: revisionInfo.executablePath,
-  ignoreHTTPSErrors: true,
-  args: ["--no-sandbox", "--disable-setuid-sandbox"]
-});
-
+    const browser = await puppeteer.launch({
+      headless: "new",
+      executablePath: chromePath,
+      ignoreHTTPSErrors: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"]
+    });
 
     const page = await browser.newPage();
     await page.setViewport({
