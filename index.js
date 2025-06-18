@@ -13,21 +13,15 @@ app.get("/", async (req, res) => {
   }
 
   try {
-    const chromePath = "/opt/render/.cache/puppeteer/chrome/linux-137.0.7151.70/chrome-linux64/chrome";
-
     const browser = await puppeteer.launch({
       headless: "new",
-      executablePath: chromePath,
       ignoreHTTPSErrors: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"]
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      executablePath: puppeteer.executablePath(), // ✅ Use Puppeteer's path
     });
 
     const page = await browser.newPage();
-    await page.setViewport({
-      width: 1920,
-      height: 1080,
-      deviceScaleFactor: 2
-    });
+    await page.setViewport({ width: 1920, height: 1080, deviceScaleFactor: 2 });
 
     console.log(`🌐 Navigating to: ${url}`);
     await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
@@ -39,13 +33,12 @@ app.get("/", async (req, res) => {
     await browser.close();
 
     const filename = `table_only_${Date.now()}.png`;
-    const outputPath = path.join(__dirname, filename);
-    fs.writeFileSync(outputPath, screenshotBuffer);
+    fs.writeFileSync(path.join(__dirname, filename), screenshotBuffer);
     console.log(`✅ Table image saved: ${filename}`);
 
     res.set("Content-Type", "image/png").send(screenshotBuffer);
   } catch (error) {
-    console.error("❌ Screenshot failed:", error);
+    console.error("❌ Screenshot failed:", error.message);
     res.status(500).send("❌ Screenshot failed: " + error.message);
   }
 });
