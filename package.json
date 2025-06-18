@@ -4,7 +4,6 @@
   "description": "Screenshot API using Puppeteer and Express",
   "main": "index.js",
   "scripts": {
-  "start": "node index.js",
   "postinstall": "npx puppeteer browsers install chrome"
 },
   "dependencies": {
