@@ -13,12 +13,19 @@ app.get("/", async (req, res) => {
   }
 
   try {
-    const browser = await puppeteer.launch({
-      headless: "new",
-      executablePath: puppeteer.executablePath(), // ✅ Add this line
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      ignoreHTTPSErrors: true
-    });
+const browserFetcher = puppeteer.createBrowserFetcher({
+  product: 'chrome',
+  path: path.resolve('/opt/render/.cache/puppeteer') // use same as postinstall cache path
+});
+const revisionInfo = await browserFetcher.download('137.0.7151.70');
+
+const browser = await puppeteer.launch({
+  headless: "new",
+  executablePath: revisionInfo.executablePath,
+  ignoreHTTPSErrors: true,
+  args: ["--no-sandbox", "--disable-setuid-sandbox"]
+});
+
 
     const page = await browser.newPage();
     await page.setViewport({
