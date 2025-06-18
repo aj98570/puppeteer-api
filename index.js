@@ -45,7 +45,7 @@ app.get("/", async (req, res) => {
 
     res.set("Content-Type", "image/png").send(screenshotBuffer);
   } catch (error) {
-    console.error("❌ Screenshot failed:", error.message);
+    console.error("❌ Screenshot failed:", error);
     res.status(500).send("❌ Screenshot failed: " + error.message);
   }
 });
