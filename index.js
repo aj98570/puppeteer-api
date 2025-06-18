@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 // Get the executable path from env (Render will provide it if set manually)
-const executablePath = process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/google-chrome'; // fallback for local
+//const executablePath = process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/google-chrome'; // fallback for local
 
 app.get("/", async (req, res) => {
   const url = req.query.url;
