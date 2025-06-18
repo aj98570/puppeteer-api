@@ -1,10 +1,13 @@
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-core"); // <-- Use puppeteer-core
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 8080;
+
+// Get the executable path from env (Render will provide it if set manually)
+const executablePath = process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/google-chrome'; // fallback for local
 
 app.get("/", async (req, res) => {
   const url = req.query.url;
@@ -14,10 +17,9 @@ app.get("/", async (req, res) => {
 
   try {
     const browser = await puppeteer.launch({
-      headless: "new",
-      ignoreHTTPSErrors: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      executablePath: puppeteer.executablePath(), // ✅ Use Puppeteer's path
+      headless: true,
+      executablePath,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"]
     });
 
     const page = await browser.newPage();
@@ -31,10 +33,6 @@ app.get("/", async (req, res) => {
     const screenshotBuffer = await element.screenshot();
 
     await browser.close();
-
-    const filename = `table_only_${Date.now()}.png`;
-    fs.writeFileSync(path.join(__dirname, filename), screenshotBuffer);
-    console.log(`✅ Table image saved: ${filename}`);
 
     res.set("Content-Type", "image/png").send(screenshotBuffer);
   } catch (error) {
