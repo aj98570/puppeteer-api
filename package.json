@@ -1,7 +1,7 @@
 {
   "name": "puppeteer-api",
   "version": "1.0.0",
-  "description": "API to return Google Sheet screenshot for AppSheet",
+  "description": "Live Google Sheet table screenshot",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
