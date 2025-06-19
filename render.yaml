@@ -2,8 +2,6 @@ services:
   - type: web
     name: puppeteer-api
     env: node
-    plan: free
-    buildCommand: npm install && npx puppeteer browsers install chrome
+    buildCommand: npm install
     startCommand: node index.js
-    branch: main
-    region: oregon
+    plan: free
