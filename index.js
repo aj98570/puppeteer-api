@@ -10,9 +10,9 @@ app.get("/", async (req, res) => {
 
   try {
     const browser = await puppeteer.launch({
-      executablePath: "/usr/bin/chromium",
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium",
       headless: "new",
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      args: ["--no-sandbox", "--disable-setuid-sandbox"]
     });
 
     const page = await browser.newPage();
@@ -22,14 +22,14 @@ app.get("/", async (req, res) => {
     await page.waitForSelector(".waffle", { timeout: 10000 });
 
     const element = await page.$(".waffle");
-    const screenshotBuffer = await element.screenshot({ type: "png" });
+    const imageBuffer = await element.screenshot({ type: "png" });
 
     await browser.close();
 
-    res.set("Content-Type", "image/png").send(screenshotBuffer);
-  } catch (error) {
-    console.error("❌ Screenshot failed:", error.message);
-    res.status(500).send("❌ Screenshot failed: " + error.message);
+    res.set("Content-Type", "image/png").send(imageBuffer);
+  } catch (err) {
+    console.error("❌ Screenshot failed:", err.message);
+    res.status(500).send("❌ Screenshot failed: " + err.message);
   }
 });
 
