@@ -1,17 +1,16 @@
-const puppeteer = require("puppeteer");
 const express = require("express");
-const cloudinary = require("cloudinary").v2;
+const puppeteer = require("puppeteer-core");
 const streamifier = require("streamifier");
+const cloudinary = require("cloudinary").v2;
 
-const app = express();
-const PORT = process.env.PORT || 8080;
-
-// Configure Cloudinary from Render environment variables
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
+
+const app = express();
+const PORT = process.env.PORT || 8080;
 
 app.get("/", async (req, res) => {
   const url = req.query.url;
@@ -21,6 +20,7 @@ app.get("/", async (req, res) => {
 
   try {
     const browser = await puppeteer.launch({
+      executablePath: "/usr/bin/google-chrome",
       headless: "new",
       ignoreHTTPSErrors: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"]
@@ -44,14 +44,14 @@ app.get("/", async (req, res) => {
 
     // Upload to Cloudinary
     const uploadStream = cloudinary.uploader.upload_stream(
-      { folder: "screenshots", resource_type: "image" },
+      { folder: "puppeteer-api" },
       (error, result) => {
         if (error) {
-          console.error("❌ Cloudinary upload failed:", error.message);
-          return res.status(500).send("❌ Upload failed: " + error.message);
+          console.error("❌ Upload error:", error);
+          return res.status(500).send("❌ Cloud upload failed: " + error.message);
         }
-        console.log("✅ Uploaded to Cloudinary:", result.secure_url);
-        res.json({ status: "success", image_url: result.secure_url });
+        console.log("✅ Uploaded to:", result.secure_url);
+        res.send(result.secure_url); // Send the Cloudinary image URL
       }
     );
 
