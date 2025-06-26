@@ -1,7 +1,19 @@
 services:
   - type: web
     name: puppeteer-api
-    env: node
-    buildCommand: npm install
-    startCommand: node index.js
+    env: docker
     plan: free
+    dockerfilePath: ./Dockerfile
+    buildFilter:
+      paths:
+        - Dockerfile
+        - index.js
+        - package.json
+    autoDeploy: true
+    envVars:
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
