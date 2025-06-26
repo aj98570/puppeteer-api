@@ -21,16 +21,27 @@ app.get("/", async (req, res) => {
 
   try {
     const browser = await puppeteer.launch({
-      headless: "new",
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      headless: true,
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-accelerated-2d-canvas",
+        "--no-first-run",
+        "--no-zygote",
+        "--single-process",
+        "--disable-gpu"
+      ],
+      timeout: 0,
     });
 
     const page = await browser.newPage();
     await page.setViewport({ width: 1920, height: 1080, deviceScaleFactor: 2 });
-    await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
-    await page.waitForSelector(".waffle", { timeout: 10000 });
 
-    const element = await page.$(".waffle");
+    // Load faster: wait for minimal events instead of full "networkidle2"
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
+
+    const element = await page.$(".waffle") || page; // fallback if .waffle not found
     const screenshotBuffer = await element.screenshot();
 
     await browser.close();
@@ -48,9 +59,7 @@ app.get("/", async (req, res) => {
           return res.status(500).send("❌ Upload failed: " + error.message);
         }
 
-        // ✅ Construct versionless image URL
         const staticUrl = `https://res.cloudinary.com/${cloudinary.config().cloud_name}/image/upload/screenshots/${publicId}.png`;
-
         console.log("✅ Uploaded:", staticUrl);
         res.json({ status: "success", image_url: staticUrl });
       }
