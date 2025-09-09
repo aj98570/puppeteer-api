@@ -1,0 +1,13 @@
+name: keep-render-alive
+
+# Run every 9 minutes (UTC) – keeps the Render instance warm
+on:
+  schedule:
+    - cron: "*/9 * * * *"
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Curl the Render ping endpoint
+        run: curl -fsSL https://puppeteer-api-yhrw.onrender.com/ping || true
